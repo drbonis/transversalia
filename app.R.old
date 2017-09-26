@@ -1,0 +1,267 @@
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
+library(shiny)
+
+ui <- navbarPage("",
+                 tabPanel("Info",{
+                   fluidRow(
+                     column(12,
+                       h1("Las aventuras del Conde de Transversalia"),
+                              p("Informacion sobre el curso"),
+                              img(src="nosferatushadow.jpg",width="80%",align="center")
+                       
+                       
+                       
+                     )
+                   )
+                   
+                   
+                 }),
+                 tabPanel("Dataset",{
+                   h1("Dataset")
+                   fluidRow(
+                     column(12,
+                       verbatimTextOutput("dataset")
+                       
+                     )
+                     
+                   )
+                 }),
+                 tabPanel("Univariable",{
+                   h1("Univariable")
+                   fluidRow(
+                     column(4,
+                       wellPanel(
+                         img(src="nosferatushadow.jpg",width="100%"),
+                         uiOutput("outcome2")
+                         
+                       )
+                       
+                     ),
+                     column(8,
+                       uiOutput("univariable")
+                     )
+                   )
+                   }),
+                 tabPanel("Bivariable",{
+                   h1("Bivariable")
+                   fluidRow(
+                     column(4,
+                       wellPanel(
+                         img(src="nosferatushadow.jpg",width="100%")
+                       )
+                       
+                     ),
+                     column(8,{}
+                       
+                     )
+                   )
+                   }),
+                 tabPanel("Multivariante",{
+                   h1("Multivariante")
+                   fluidRow(
+                     column(4,
+                      wellPanel(
+                         img(src="nosferatushadow.jpg",width="100%"),
+                         uiOutput("outcome"),
+                         uiOutput("exposures")
+                      )
+
+                     ),
+                     column(8,
+                      verbatimTextOutput("regression_formula"),
+                      h3("Resumen de Regresion Logistica"),
+                      verbatimTextOutput("regression_or"),
+                      h3("Interpretacion de resultados"),
+                      uiOutput("regression_interpretation"),
+                      h3("Coeficientes de Regresion Logistica"),
+                      verbatimTextOutput("regression_full")
+                       
+                       
+                     )
+                   )
+                   })
+                 )
+
+
+
+
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  data <- read.table("data/vampiros_dataset.txt", header=TRUE, sep="\t")
+  data$anciano<-as.integer(data$edad>300)
+  
+  
+  output$outcome2 <- renderUI({
+    selectInput("outcome2","Variable", choices=as.list(names(data)[names(data)!='id']))
+  })
+  
+  output$outcome <- renderUI({
+    selectInput("outcome","Variable dependiente", choices=as.list(names(data)[names(data)!="id" & names(data)!="edad"]))
+  })
+
+  output$exposures <- renderUI({
+    checkboxGroupInput("exposures","Variables independientes", choices=as.list(names(data)[names(data)!="id" & names(data)!="edad"]))
+  })
+  
+  output$regression_formula <- renderPrint({
+    my_formula <- sprintf("%s~%s",input$outcome,paste0(input$exposures,collapse="+"))
+    print(my_formula)
+  })
+  
+  output$regression_or <- renderPrint({
+    my_formula <- sprintf("%s~%s",input$outcome,paste0(input$exposures,collapse="+"))
+    modelo.logit <- glm(as.formula(my_formula), data=data, family="binomial")
+    print(
+      cbind(
+        OR = exp(coef(modelo.logit)), 
+        exp(confint(modelo.logit)),
+        p_value = coef(summary(modelo.logit))[,4]
+      )
+    )
+    
+  })
+  
+  output$regression_full <- renderPrint({
+    my_formula <- sprintf("%s~%s",input$outcome,paste0(input$exposures,collapse="+"))
+    modelo.logit <- glm(as.formula(my_formula), data=data, family="binomial")
+    print(summary(modelo.logit))
+  })
+  
+  output$regression_interpretation <- renderUI({
+    my_formula <- sprintf("%s~%s",input$outcome,paste0(input$exposures,collapse="+"))
+    modelo.logit <- glm(as.formula(my_formula), data=data, family="binomial")
+    coeficients<-cbind(
+      OR = exp(coef(modelo.logit)), 
+      exp(confint(modelo.logit)),
+      p_value = coef(summary(modelo.logit))[,4]
+    )
+    tmp<-sapply(rownames(coeficients),function(row){
+      if(coeficients[row,4]<0.05)
+        {
+          if(coeficients[row,4]<0.01) {
+            "fuerte evidencia"
+          } else {
+            if(coeficients[row,4]<0.001) {
+              significacion <- "muy fuerte evidencia"
+            } else {
+              signification <- "moderada evidencia"
+            }
+          }
+          if(coeficients[row,1]<1) {
+            signo_asociacion <- "factor de proteccion "
+          } else {
+            signo_asociacion <- "factor de riesgo "
+          }
+          paste("<div>Se encontro una ",signification," (p = ",
+                round(coeficients[row,4],2),
+                ") de que ",
+                "<strong>",
+                row,
+                "es un ",
+                signo_asociacion,
+                "frente a ",
+                input$outcome,
+                "</strong>",
+                "(OR = ",round(coeficients[row,1],2)," [",round(coeficients[row,2],2)," a ",round(coeficients[row,3],2),"]IC95% ).",
+                
+                "</div>",
+                collapse="")
+      } else {
+        paste("<div>No hay asociacion estadisticamente significativa (p = ",round(coeficients[row,4],2),") entre ",row," y ", input$outcome,"</div>",collapse="")
+      }
+      })
+    tmp2<-c()
+    for(i in unname(tmp)) {
+      tmp2<-paste(tmp2,i)
+    }
+    
+    tagList(HTML(tmp2))
+  })
+  
+  updateAnciano <- reactive(
+    {
+      tmp2<-as.integer(data$edad>=input$cutoff_point)
+      data$anciano<-tmp2
+      
+      return(data)
+    }
+  )
+  
+  output$univariable <- renderUI({
+
+
+    if(length(table(data[,input$outcome2]))==2) {
+      #es variable dicotomica
+      prop<-prop.test(table(data[,input$outcome2])[2],length(data[,input$outcome2]))
+      
+      tmp<-c(
+        renderUI(pre(paste(input$outcome2,":",prop$estimate,"[",round(prop$conf.int[1],2),"-",round(prop$conf.int[2],2),"] 95%IC"))),
+        renderPlot(pie(table(data[,input$outcome2])))
+      )
+    } else {
+      #no es variable dicotomica
+      mean<-t.test(data[,input$outcome2])
+      dens<-density(data[,input$outcome2])
+      tmp<-c(
+        renderUI(pre(paste(input$outcome2,":",mean$estimate,"[",round(mean$conf.int[1],2),"-",round(mean$conf.int[2],2),"] 95%IC"))),
+        renderPlot(hist(data[,input$outcome2],main=input$outcome2,breaks=50))
+      )
+      
+    }
+    
+    if(input$outcome2=="anciano") {
+      
+        a<-renderPrint(updateAnciano())
+        #prop<-prop.test(table(a$edad)[2],length(a[,edad]))
+        tmp2<-c(
+          renderUI(pre(paste(input$outcome2,":",prop$estimate,"[",round(prop$conf.int[1],2),"-",round(prop$conf.int[2],2),"] 95%IC"))),
+          renderPlot(plot(
+            data$edad[order(data$edad)],
+            c(1:length(data$edad)),
+            type="l"
+          )
+          ),
+          renderUI(
+            sliderInput("cutoff_point", "Selecciona punto de corte",
+                        min = min(data$edad),
+                        max = max(data$edad), 
+                        value = quantile(data$edad,c(0.5)))
+          )
+        )
+
+      
+      
+        
+        tmp<-c(
+          renderUI(pre(paste(input$outcome2,":",prop$estimate,"[",round(prop$conf.int[1],2),"-",round(prop$conf.int[2],2),"] 95%IC"))),
+          renderPlot(pie(table(data[,input$outcome2])))
+        )
+      tmp<-c(tmp,tmp2,renderPrint(input$cutoff_point),a)
+      
+    }
+    
+
+    tagList(
+      renderUI(tmp)
+    )
+    
+  })
+  
+  output$dataset<-renderPrint({data})
+
+   
+  
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+

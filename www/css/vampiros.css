@@ -1,0 +1,161 @@
+html {
+  height: 100%;
+}
+body {
+    min-height: 100%;
+    background-color: #FFEBCF;
+}
+table.vampTable {
+  
+  font-family: "Book Antiqua", Palatino, serif;
+  /*border: 0 solid #948473;*/
+  background-color: #EDD7AF;
+  width: 100%;
+  text-align: center;
+  margin: 5px;
+}
+table.vampTable td, table.vampTable th {
+  /*border: 1px solid #948473;*/
+  padding: 3px 3px;
+}
+table.vampTable tbody td {
+  font-size: 18px;
+  color: #000000;
+}
+table.vampTable tr:nth-child(even) {
+  background: #DBC3AA;
+}
+table.vampTable thead {
+  background: #948473;
+  
+}
+table.vampTable thead th {
+  font-size: 20px;
+  font-weight: bold;
+  color: #F0F0F0;
+  text-align: center;
+}
+table.vampTable tfoot {
+  font-size: 21px;
+  font-weight: bold;
+  color: #F0F0F0;
+  background: #948473;
+}
+table.vampTable tfoot td {
+  font-size: 21px;
+}
+
+.tdbold {
+  background: #948473;
+  font-size: 22px;
+  font-weight: bold;
+  color: #F0F0F0 !important;
+  text-align: center;
+}
+.tdempty{
+  background-color: #FFEBCF;
+  border: none !important;
+}
+
+#univariable_list {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#univariable_list .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#selector_bivariable {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#selector_bivariable .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#outcome_crude {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#outcome_crude .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#exposures_crude {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#exposures_crude .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#outcome {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#outcome .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#exposures {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#exposures .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#exposure_interacted {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#exposure_interacted .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+#interaction {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+}
+
+#interaction .control-label {
+  font-family: "Pirata One", "Book Antiqua", Palatino, serif;
+  font-size: 22px;
+}
+
+.logit_formula {
+  font-family: "Book Antiqua", Palatino, serif;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+}
