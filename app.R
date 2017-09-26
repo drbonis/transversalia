@@ -7,8 +7,10 @@
 #    http://shiny.rstudio.com/
 #
 
+
 library(shiny)
 library(epitools)
+library(MASS)
 
 ui <- tagList(
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "./css/vampiros.css?v2")),
@@ -20,7 +22,7 @@ ui <- tagList(
                      column(12,
                        
                        h1("Vampiros en Transversalia"),
-                       h2("Fueron humanos, pero ahora están en un estado intermedio entre la vida y la muerte, flacos, pálidos, y con largos y puntiagudos caninos
+                       h2("Fueron humanos, pero ahora están en un estado intermedio entre la vida y la muerte, flacos, pÃ¡lidos, y con largos y puntiagudos caninos
 ")
 
                      )
@@ -422,64 +424,7 @@ server <- function(input, output) {
   })
 
   
-  output$regression_interpretation <- renderUI({
-    my_exposures <- paste0(input$exposures,collapse="+")
-    if(input$exposure_interacted!="."&input$interaction!="."){
-      my_interaction_term<-paste(c(input$exposure_interacted,"*",input$interaction),collapse="")
-      my_exposures <- paste0(c(my_exposures,my_interaction_term),collapse="+")
-    }
-    my_formula <- sprintf("%s~%s",input$outcome,my_exposures)
-    modelo.logit <- glm(as.formula(my_formula), data=data, family="binomial")
-    coeficients<-cbind(
-      OR = exp(coef(modelo.logit)), 
-      exp(confint(modelo.logit)),
-      p_value = coef(summary(modelo.logit))[,4]
-    )
-    tmp<-sapply(rownames(coeficients)[rownames(coeficients)!="(Intercept)"],function(row){
-      if(coeficients[row,4]<0.05)
-      {
-        if(coeficients[row,4]<0.01) {
-          if(coeficients[row,4]<0.001) {
-            signification <- "muy fuerte evidencia"
-          } else {
-            signification <- "fuerte evidencia"  
-          }
-        } else {
-            signification <- "moderada evidencia"
-        }
-        if(coeficients[row,1]<1) {
-          signo_asociacion <- "factor de proteccion "
-        } else {
-          signo_asociacion <- "factor de riesgo "
-        }
-        paste("<div>Se encontro una ",signification," (p = ",
-              format(round(coeficients[row,4],2),nsmall=4),
-              ") de que ",
-              "<strong>",
-              row,
-              "es un ",
-              signo_asociacion,
-              "frente a ",
-              input$outcome,
-              "</strong>",
-              "(OR = ",round(coeficients[row,1],2)," [",round(coeficients[row,2],2)," a ",round(coeficients[row,3],2),"]IC95% ).",
-              
-              "</div>",
-              collapse="")
-      }
-    })
-    tmp2<-c()
-    for(i in unname(tmp)) {
-      tmp2<-paste(tmp2,i)
-    }
-    
-    tagList(HTML(tmp2))
-  })
-  
-  
-  
-  
-  
+
   
   #Pantalla Presentación
   
