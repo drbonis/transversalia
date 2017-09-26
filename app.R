@@ -346,7 +346,7 @@ server <- function(input, output) {
     myhtml<-paste(myhtml,"<tr><td class='tdempty'></td><td>%<br>[IC95%]</td><td>%<br>[IC95%]</td><td>OR<br>[IC95%]</td><td>Chi2 p</td></tr>")
 
     for(row in tmp3) {
-      myhtml<-paste(myhtml,"<tr><td class='tdbold'>",row$name,"</td><td>",format(round(row$out0prop*100,1),nsmall=1),"%<br>[",format(round(row$out0proplower*100,1),nsmall=1),"%-",format(round(row$out0propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$out1prop*100,1),nsmall=1),"%<br>[",format(round(row$out1proplower*100,1),nsmall=1),"%-",format(round(row$out1propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$or,2),nsmall=2),"<br>[",format(round(row$orlower,2),nsmall=2),"-",format(round(row$orupper,2),nsmall=2),"]</td><td>",if(row$orchi2<0.001){"<0.001"} else {format(round(row$orchi2,3),nsmall=3)},"</td></tr>", collapse="-")
+      myhtml<-paste(myhtml,"<tr><td class='tdbold'>",row$name,"</td><td>",format(round(row$out1prop*100,1),nsmall=1),"%<br>[",format(round(row$out1proplower*100,1),nsmall=1),"%-",format(round(row$out1propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$out0prop*100,1),nsmall=1),"%<br>[",format(round(row$out0proplower*100,1),nsmall=1),"%-",format(round(row$out0propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$or,2),nsmall=2),"<br>[",format(round(row$orlower,2),nsmall=2),"-",format(round(row$orupper,2),nsmall=2),"]</td><td>",if(row$orchi2<0.001){"<0.001"} else {format(round(row$orchi2,3),nsmall=3)},"</td></tr>", collapse="-")
     }
     
     myhtml<-paste(myhtml,"</table>")
