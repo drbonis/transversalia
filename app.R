@@ -141,11 +141,14 @@ server <- function(input, output) {
   })
   
   output$univariable_table <- renderUI({
-    htmlTableUnivariable<-"<table class='vampTable'><thead><tr><th>Variable</th><th>Promedio</th><th>IC95%</th></tr></thead>"
+    htmlTableUnivariable<-paste0("
+      <table class='vampTable'>
+        <thead><tr><th>n=",length(data[,1]),"</th><th class='tdempty'></th><th class='tdempty'></th><th class='tdempty'></th></tr></thead>
+        <thead><tr><th>Variable</th><th>n</th><th>Proporcion</th><th>IC95%</th></tr></thead>")
     
     tableRowsUnivariable<-sapply(input$univariable_list,function(myvar){
       prop<-prop.test(table(data[,myvar])[2],length(data[,myvar]))
-      return(paste("<tr><td>",myvar,":</td><td>",format(round(prop$estimate,3),nsmall=3),"</td><td>[",format(round(prop$conf.int[1],2),nsmall=2),"-",format(round(prop$conf.int[2],2),nsmall=2),"]</td></tr>"))
+      return(paste("<tr><td>",myvar,":</td><td>",table(data[,myvar])[2],"</td><td>",format(round(prop$estimate,3),nsmall=3),"</td><td>[",format(round(prop$conf.int[1],2),nsmall=2),"-",format(round(prop$conf.int[2],2),nsmall=2),"]</td></tr>"))
     })
     
     for(row in tableRowsUnivariable) {
@@ -322,16 +325,22 @@ server <- function(input, output) {
             out1exp0=eval(expAllOut1-exp1Out1),
             out1prop=unname(propout1$estimate),
             out1proplower=propout1$conf.int[1],
-            out1propupper=propout1$conf.int[2]
+            out1propupper=propout1$conf.int[2],
+            expAllOut0=expAllOut0,
+            expAllOut1=expAllOut1
               
           )
         )
 
       })
+    
+    ntrue <- length(data[,input$outcome_crude][data[input$outcome_crude]==1])
+    nfalse <- length(data[,input$outcome_crude][data[input$outcome_crude]==0])
 
     myhtml<-"<table class='vampTable'>"
     
-    myhtml<-paste(myhtml,"<thead><th class='tdempty'></th><th>",input$outcome_crude," ",if(input$outcome_crude=="sexo"){"Hombre"}else{"Si"},"</th><th>",input$outcome_crude," ",if(input$outcome_crude=="sexo"){"Mujer"}else{"No"},"</th><th class='tdbold'></th><th class='tdbold'></th></thead>")
+    myhtml<-paste(myhtml,"<thead><th class='tdempty'></th><th>",input$outcome_crude," ",if(input$outcome_crude=="sexo"){"Hombre"}else{"Si"},"<br>n=",ntrue,"</th><th>",input$outcome_crude," ",if(input$outcome_crude=="sexo"){"Mujer"}else{"No"},"<br>n=",nfalse,"</th><th class='tdbold'></th><th class='tdbold'></th></thead>")
+    
     myhtml<-paste(myhtml,"<tr><td class='tdempty'></td><td>%<br>[IC95%]</td><td>%<br>[IC95%]</td><td>OR<br>[IC95%]</td><td>Chi2 p</td></tr>")
 
     for(row in tmp3) {
