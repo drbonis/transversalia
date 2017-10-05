@@ -22,7 +22,7 @@ ui <- tagList(
                      column(12,
                        
                        h1("Vampiros en Transversalia"),
-                       h2("Fueron humanos, pero ahora están en un estado intermedio entre la vida y la muerte, flacos, pÃ¡lidos, y con largos y puntiagudos caninos
+                       h2("Fueron humanos, pero ahora están en un estado intermedio entre la vida y la muerte, flacos, pálidos, y con largos y puntiagudos caninos
 ")
 
                      )
@@ -88,15 +88,14 @@ ui <- tagList(
                          uiOutput("outcome"),
                          uiOutput("exposures"),
                          uiOutput("exposure_interacted"),
-                         uiOutput("interaction")
+                         uiOutput("interaction"),
+                         actionButton("run","Calcular")
                       )
 
                      ),
                      column(8,
-                      uiOutput("regression_output")#,
-                      #uiOutput("regression_interpretation")
-                       
-                       
+                      uiOutput("regression_output")
+
                      )
                    )
                    }),
@@ -150,7 +149,7 @@ server <- function(input, output) {
     
     tableRowsUnivariable<-sapply(input$univariable_list,function(myvar){
       prop<-prop.test(table(data[,myvar])[2],length(data[,myvar]))
-      return(paste("<tr><td>",myvar,":</td><td>",table(data[,myvar])[2],"</td><td>",format(round(prop$estimate,3),nsmall=3),"</td><td>[",format(round(prop$conf.int[1],2),nsmall=2),"-",format(round(prop$conf.int[2],2),nsmall=2),"]</td></tr>"))
+      return(paste("<tr><td>",if(myvar=='sexo'){"hombres"}else{myvar},":</td><td>",table(data[,myvar])[2],"</td><td>",format(round(prop$estimate,3),nsmall=3),"</td><td>[",format(round(prop$conf.int[1],2),nsmall=2),"-",format(round(prop$conf.int[2],2),nsmall=2),"]</td></tr>"))
     })
     
     for(row in tableRowsUnivariable) {
@@ -346,7 +345,7 @@ server <- function(input, output) {
     myhtml<-paste(myhtml,"<tr><td class='tdempty'></td><td>%<br>[IC95%]</td><td>%<br>[IC95%]</td><td>OR<br>[IC95%]</td><td>Chi2 p</td></tr>")
 
     for(row in tmp3) {
-      myhtml<-paste(myhtml,"<tr><td class='tdbold'>",row$name,"</td><td>",format(round(row$out1prop*100,1),nsmall=1),"%<br>[",format(round(row$out1proplower*100,1),nsmall=1),"%-",format(round(row$out1propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$out0prop*100,1),nsmall=1),"%<br>[",format(round(row$out0proplower*100,1),nsmall=1),"%-",format(round(row$out0propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$or,2),nsmall=2),"<br>[",format(round(row$orlower,2),nsmall=2),"-",format(round(row$orupper,2),nsmall=2),"]</td><td>",if(row$orchi2<0.001){"<0.001"} else {format(round(row$orchi2,3),nsmall=3)},"</td></tr>", collapse="-")
+      myhtml<-paste(myhtml,"<tr><td class='tdbold'>",if(row$name=='sexo'){"hombres"}else{row$name},"</td><td>",format(round(row$out1prop*100,1),nsmall=1),"%<br>[",format(round(row$out1proplower*100,1),nsmall=1),"%-",format(round(row$out1propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$out0prop*100,1),nsmall=1),"%<br>[",format(round(row$out0proplower*100,1),nsmall=1),"%-",format(round(row$out0propupper*100,1),nsmall=1),"%]</td><td>",format(round(row$or,2),nsmall=2),"<br>[",format(round(row$orlower,2),nsmall=2),"-",format(round(row$orupper,2),nsmall=2),"]</td><td>",if(row$orchi2<0.001){"<0.001"} else {format(round(row$orchi2,3),nsmall=3)},"</td></tr>", collapse="-")
     }
     
     myhtml<-paste(myhtml,"</table>")
@@ -383,7 +382,12 @@ server <- function(input, output) {
     selectInput("interaction","Variable de interacción", choices=tmp, selected=".")
   })
   
-  output$regression_output <- renderUI({
+  
+
+  htmlOutput<-reactiveValues(html="")
+  
+  observeEvent(input$run, {
+    cat("hola")
     my_exposures <- paste0(input$exposures,collapse="+")
     if(input$exposure_interacted!="."&input$interaction!="."){
       my_interaction_term<-paste(c(input$exposure_interacted,"*",input$interaction),collapse="")
@@ -391,23 +395,20 @@ server <- function(input, output) {
     }
     my_formula <- sprintf("%s~%s",input$outcome,my_exposures)
     modelo.logit <- glm(as.formula(my_formula), data=data, family="binomial")
-    
-    htmlOutput<-""
-    
     my_results_names <- names(modelo.logit$coef)
     if(length(my_results_names)>1){
       my_results_ors <- format(round(exp(coef(modelo.logit)),2),nsmall=2)
       my_results_lowers <- format(round(exp(confint(modelo.logit)[,1]),2),nsmall=2)
       my_results_uppers <- format(round(exp(confint(modelo.logit)[,2]),2),nsmall=2)
       my_results_pvalues <- coef(summary(modelo.logit))[,4]
-      
-      htmlOutput<-paste0(htmlOutput,"<table class='vampTable'>")
-      htmlOutput<-paste0(htmlOutput,"<thead><th>Variable</th><th>OR</th><th colspan=2>IC95%</th><th>p-value</th></thead>")
+      htmlOutput$html<-""
+      htmlOutput$html<-paste0(htmlOutput$html,"<table class='vampTable'>")
+      htmlOutput$html<-paste0(htmlOutput$html,"<thead><th>Variable</th><th>OR</th><th colspan=2>IC95%</th><th>p-value</th></thead>")
       for(i in c(2:length(my_results_names))) { #2: to skip Intercept term
         
-        htmlOutput<-paste0(htmlOutput,
+        htmlOutput$html<-paste0(htmlOutput$html,
                            "<tr>",
-                           "<td class='tdbold'>",my_results_names[i],"</td>",
+                           "<td class='tdbold'>",if(my_results_names[i]=='sexo'){"hombre"}else{my_results_names[i]},"</td>",
                            "<td>",my_results_ors[i],"</td>",
                            "<td>",my_results_lowers[i],"</td>",
                            "<td>",my_results_uppers[i],"</td>",
@@ -415,16 +416,15 @@ server <- function(input, output) {
                            "</tr>")
       }
       
-      htmlOutput<-paste0(htmlOutput,"</table>")
-      htmlOutput<-paste0(htmlOutput,"<div class='logit_formula'><span style='width: 100%; word-wrap:break-word; display:inline-block;' class='tdempty'>Fórmula de la regresión logística: ",my_formula,"</span></div>")
-      
+      htmlOutput$html<-paste0(htmlOutput$html,"</table>")
+      htmlOutput$html<-paste0(htmlOutput$html,"<div class='logit_formula'><span style='width: 100%; word-wrap:break-word; display:inline-block;' class='tdempty'>Fórmula de la regresión logística: ",my_formula,"</span></div>")
     }
-    
-    tagList(as.list(c(renderUI(HTML(htmlOutput)))))
-  })
+  })  
 
   
-
+  output$regression_output <- renderUI({
+    tagList(as.list(c(renderUI(HTML(htmlOutput$html)))))
+  }) 
   
   #Pantalla Presentación
   

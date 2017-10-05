@@ -203,7 +203,7 @@
 
         perspective: 1000,
 
-        transitionDuration: 1000
+        transitionDuration: 2000
     };
 
     // It's just an empty function ... and a useless comment.
@@ -754,6 +754,7 @@
             }
         }, false );
 
+/*
         // Delegated handler for clicking on the links to presentation steps
         document.addEventListener( "click", function( event ) {
 
@@ -780,6 +781,8 @@
             }
         }, false );
 
+*/
+/*
         // Delegated handler for clicking on step elements
         document.addEventListener( "click", function( event ) {
             var target = event.target;
@@ -795,7 +798,7 @@
                 event.preventDefault();
             }
         }, false );
-
+*/
         // Touch handler to detect taps on the left and right side of the screen
         // based on awesome work of @hakimel: https://github.com/hakimel/reveal.js
         document.addEventListener( "touchstart", function( event ) {

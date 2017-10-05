@@ -190,7 +190,7 @@ a:focus {
 */
 .impress-enabled .step {
     margin: 0;
-    opacity: 0.3;
+    opacity: 0.01;
 
     -webkit-transition: opacity 1s;
     -moz-transition:    opacity 1s;
@@ -212,7 +212,7 @@ a:focus {
 .slide {
     display: block;
 
-    width: 900px;
+    width: 1000px;
     height: 700px;
     padding: 40px 60px;
 
@@ -221,14 +221,20 @@ a:focus {
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
 
-    color: rgb(102, 102, 102);
+    color: #FFE3AA;
     text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
     font-family: 'PT Sans Narrow', sans-serif;
 
     font-size: 30px;
     line-height: 36px;
     letter-spacing: -1px;
+    
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
 }
+
+
 
 .slide q {
     font-family: 'Pirata One', cursive;
@@ -258,6 +264,64 @@ a:focus {
     line-height: 72px;
 
     margin-top: 100px;
+}
+
+
+
+.smallback {
+    background-image: url('../img/fondo_pantalla_textos.jpg');
+}
+
+.bigback {
+    background-image: url('../img/fondo_pantalla_textos_grande.jpg');
+}
+
+.camina_por_el_pueblo_back {
+  background-image: url('../img/camina_por_el_pueblo.jpg');
+}
+
+.puerto_back {
+  background-image: url('../img/puerto.jpg');
+}
+
+.casa_noble_back {
+  background-image: url('../img/casa_noble.jpg');
+}
+
+.urbanizacion_back {
+  background-image: url('../img/urbanizacion.jpg');
+}
+
+.gerente_piensa_back {
+  background-image: url('../img/gerente_piensa.jpg');
+}
+
+.gerente_rie_back {
+  background-image: url('../img/gerente_rie.jpg');
+}
+
+.gerente_y_vicente_back {
+  background-image: url('../img/gerente_y_vicente.jpg');
+}
+
+.aurora_traje_rie_back {
+  background-image: url('../img/aurora_traje_rie.jpg');
+}
+
+.vicente_mapa_back {
+  background-image: url('../img/vicente_mapa.jpg');
+}
+
+.carruaje_back {
+  background-image: url('../img/carruaje.jpg');
+}
+
+.centro_de_salud_back {
+  background-image: url('../img/centro_de_salud.jpg');
+}
+
+.vicente_se_asoma_a_puerta_back {
+  background-image: url('../img/vicente_se_asoma_a_puerta.jpg');
 }
 
 /*
