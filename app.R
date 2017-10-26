@@ -123,7 +123,6 @@ server <- function(input, output) {
   readMyData<-function(){
     data<-read.table("data/vampiros_dataset.txt", header=TRUE, sep="\t")
     data$anciano<-as.integer(data$edad>age_cutoff)
-    #data$anciano<-as.integer(data$EDAD>age_cutoff)
     return(data)
   }
   
