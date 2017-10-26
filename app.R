@@ -21,12 +21,22 @@ ui <- tagList(
                    fluidRow(
                      column(12,
                        
-                       h1("Vampiros en Transversalia"),
-                       h2("Fueron humanos, pero ahora están en un estado intermedio entre la vida y la muerte, flacos, pálidos, y con largos y puntiagudos caninos
-")
+                       h1(style="font-size: 86px; font-family: 'Pirata One', 'Book Antiqua', Palatino, serif; text-align: center","Vampiros en Transversalia"),
+                       h2(style="font-family: 'Book Antiqua', Palatino, serif; text-align: center; width: 60%; margin: auto;", "'Fueron humanos, pero ahora están en un estado intermedio entre la vida y la muerte, flacos, pálidos, y con largos y puntiagudos caninos'"
+),
+                       h3(style="font-family: 'Book Antiqua', Palatino, serif; text-align: center", "Julio Bonis y Verónica Bryant.")
 
                      )
                    )
+                 }),
+                 tabPanel("Presentación",{
+                    fluidRow(
+                      column(12,
+                             verbatimTextOutput("tmp1"),
+                             HTML("<iframe style='display: block; border: none; height: 80vh; width: 95vw; text-align: center' src='vampiros.html'></iframe>")
+                             
+                      )
+                    )
                  }),
                  tabPanel("Dataset",{
                    h1("Dataset")
@@ -98,16 +108,8 @@ ui <- tagList(
 
                      )
                    )
-                   }),
-                 tabPanel("Presentación",{
-                   fluidRow(
-                     column(12,
-                            verbatimTextOutput("tmp1"),
-                            HTML("<iframe style='display: block; border: none; height: 80vh; width: 95vw; text-align: center' src='vampiros.html'></iframe>")
-                            
-                     )
-                   )
-                 })
+                   })
+                 
                 )
 )
 
@@ -386,7 +388,6 @@ server <- function(input, output) {
   htmlOutput<-reactiveValues(html="")
   
   observeEvent(input$run, {
-    cat("hola")
     my_exposures <- paste0(input$exposures,collapse="+")
     if(input$exposure_interacted!="."&input$interaction!="."){
       my_interaction_term<-paste(c(input$exposure_interacted,"*",input$interaction),collapse="")
