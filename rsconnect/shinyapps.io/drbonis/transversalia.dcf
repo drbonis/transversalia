@@ -5,6 +5,6 @@ account: drbonis
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 218855
-bundleId: 997982
+bundleId: 1046038
 url: https://drbonis.shinyapps.io/transversalia/
-when: 1506430498.49739
+when: 1509014064.08205

@@ -6,7 +6,14 @@
 #
 #    http://shiny.rstudio.com/
 #
-
+# 
+# para desplegar app en shyniapps.io detrás de un proxy:
+#
+#
+# options(RCurlOptions = list(proxy = "proxy:port", proxyuserpwd="user:password", verbose = TRUE))
+# library(rsconnect)
+# rsconnect::setAccountInfo(name='', token='', secret='') # descargar de shyniapps.io
+# deployApp()
 
 library(shiny)
 library(epitools)
